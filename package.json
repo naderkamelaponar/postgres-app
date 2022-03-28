@@ -23,6 +23,8 @@
     },
     "homepage": "https://github.com/naderkamelaponar/postgres-app#readme",
     "dependencies": {
+        "db-migrate": "^0.11.13",
+        "db-migrate-pg": "^1.2.2",
         "dotenv": "^16.0.0",
         "express": "^4.17.3",
         "express-rate-limit": "^6.3.0",
