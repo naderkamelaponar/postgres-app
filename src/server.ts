@@ -3,6 +3,7 @@ import express from "express";
 import morgan from "morgan";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
+import glopalError from "./middlewares/errors";
 const port = 3000;
 const app = express();
 const address = "0.0.0.0:" + port;
@@ -26,6 +27,13 @@ app.post("/", (req, res) => {
         data: req.body,
     });
 });
+app.use((_req, res) => {
+    res.status(404).json({
+        code: res.status,
+        message: "route not existes",
+    });
+});
+app.use(glopalError);
 app.listen(port, () => {
     console.log(`server is live @${address}`);
 });
