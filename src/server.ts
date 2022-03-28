@@ -4,7 +4,9 @@ import morgan from "morgan";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import glopalError from "./middlewares/errors";
-const port = 3000;
+import config from "./config";
+import db from "./database";
+const port = config.port || 3000;
 const app = express();
 const address = "0.0.0.0:" + port;
 const limiter = rateLimit({
@@ -18,6 +20,20 @@ app.use(limiter);
 app.use(express.json());
 app.use(morgan("common"));
 app.use(helmet());
+app.use(glopalError);
+// db.connect().then((client) => {
+//     return client
+//         .query("SELECT NOW()")
+//         .then((res) => {
+//             console.log(res.rows);
+//             client.release();
+//         })
+//         .catch((err) => {
+//             client.release();
+//             console.error(err);
+//         });
+// });
+
 app.get("/", (req, res) => {
     res.send("بسم الله الرحمن الرحيم");
 });
@@ -33,7 +49,6 @@ app.use((_req, res) => {
         message: "route not existes",
     });
 });
-app.use(glopalError);
 app.listen(port, () => {
     console.log(`server is live @${address}`);
 });
