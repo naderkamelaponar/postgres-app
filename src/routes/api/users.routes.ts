@@ -10,6 +10,6 @@ routers
     .get(userControllers.selectUser)
     .patch(userControllers.updateUser)
     .delete(userControllers.deleteUser);
-
+routers.route("/authinticate").post(userControllers.authinticate);
 //routers.post("/new_user", (req: Request, res: Response) => {});
 export default routers;

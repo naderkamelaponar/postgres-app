@@ -1,7 +1,7 @@
 import User from "../types/user.type";
 import db from "../database/index";
 import config from "../config";
-import bcrypt, { hash } from "bcrypt";
+import bcrypt from "bcrypt";
 const hashPassword = (password: string) => {
     const salt = parseInt(config.salt as string, 10);
     return bcrypt.hashSync(`${password}${config.pepper}`, salt);
@@ -79,6 +79,32 @@ class userModel {
             return resault.rows[0];
         } catch (error) {
             throw new Error(("Couldn't delete the row:" + error) as string);
+        }
+    }
+    async authinticate(email: string, password: string): Promise<User | null> {
+        try {
+            const conn = await db.connect();
+            let sql = "SELECT password FROM users_table where email=$1";
+            const resault = await conn.query(sql, [email]);
+            if (resault.rows.length) {
+                const { password: hashPassword } = resault.rows[0];
+                const isValidPassword = bcrypt.compareSync(
+                    `${password}${config.pepper}`,
+                    hashPassword
+                );
+                if (isValidPassword) {
+                    sql =
+                        "SELECT id,user_name,first_name,last_name,email FROM users_table WHERE email=($1)";
+                    const userInfo = await conn.query(sql, [email]);
+
+                    conn.release();
+                    return userInfo.rows[0];
+                }
+            }
+            conn.release();
+            return null;
+        } catch (error) {
+            throw new Error(("Invalid Data" + error) as string);
         }
     }
 }
